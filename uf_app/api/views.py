@@ -1,4 +1,6 @@
+import django_filters
 from django.utils.translation import ugettext as _
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
@@ -14,9 +16,18 @@ INVALID_DATE_ERROR_MESSAGE = _('Date format invalid must be yyyymmdd (year, mont
 INVALID_VALUE_ERROR_MESSAGE = _('Value must be valid float')
 
 
+class UFValueFilter(filters.FilterSet):
+    year = django_filters.CharFilter(name='date', lookup_expr='year')
+
+    class Meta:
+        model = UFValue
+        fields = ('value', 'date', 'year')
+
+
 class UFValueViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UFValueSerializer
     queryset = UFValue.objects.all()
+    filter_class = UFValueFilter
 
 
 @api_view(['GET'])

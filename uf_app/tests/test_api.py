@@ -1,5 +1,3 @@
-import json
-
 import pendulum
 from django.test import TestCase
 
@@ -25,11 +23,71 @@ class UFValueListAPITest(TestCase):
 
         response = self.client.get(self.base_url)
         self.assertEqual(
-            json.loads(response.content.decode('utf8')),
+            response.json(),
             [{
                 "value": value,
                 "date": date.to_date_string()
             }]
+        )
+
+    def test_filter_by_year(self):
+        value1 = 26348.83
+        date1 = pendulum.date.create(2017, 1, 1)
+
+        value2 = 26347.7
+        date2 = pendulum.date.create(2017, 1, 2)
+
+        uf_values = [
+            UFValue(value=value1, date=date1),
+            UFValue(value=value2, date=date2)
+        ]
+
+        UFValue.objects.bulk_create(uf_values)
+
+        response = self.client.get('{}?year=2017'.format(self.base_url))
+
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "value": value2,
+                    "date": date2.to_date_string()
+                },
+                {
+                    "value": value1,
+                    "date": date1.to_date_string()
+                }
+            ]
+        )
+
+    def test_filter_by_date(self):
+        value1 = 26348.83
+        date1 = pendulum.date.create(2017, 1, 1)
+
+        value2 = 26347.7
+        date2 = pendulum.date.create(2017, 1, 2)
+
+        uf_values = [
+            UFValue(value=value1, date=date1),
+            UFValue(value=value2, date=date2)
+        ]
+
+        UFValue.objects.bulk_create(uf_values)
+
+        response = self.client.get(
+            '{}?date={}'.format(
+                self.base_url, date1.to_date_string()
+            )
+        )
+
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "value": value1,
+                    "date": date1.to_date_string()
+                }
+            ]
         )
 
 
@@ -40,7 +98,7 @@ class UFPriceAPITest(TestCase):
         response = self.client.get(self.base_url)
 
         self.assertEqual(
-            json.loads(response.content.decode('utf8')),
+            response.json(),
             {}
         )
 
@@ -100,6 +158,6 @@ class UFPriceAPITest(TestCase):
                 date.strftime('%Y%m%d')
             )
         )
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.json().get('price'))
