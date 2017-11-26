@@ -23,7 +23,7 @@ class UFValueListAPITest(TestCase):
 
         response = self.client.get(self.base_url)
         self.assertEqual(
-            response.json(),
+            response.json().get('results', []),
             [{
                 "value": value,
                 "date": date.to_date_string()
@@ -47,7 +47,7 @@ class UFValueListAPITest(TestCase):
         response = self.client.get('{}?year=2017'.format(self.base_url))
 
         self.assertEqual(
-            response.json(),
+            response.json().get('results'),
             [
                 {
                     "value": value2,
@@ -81,7 +81,7 @@ class UFValueListAPITest(TestCase):
         )
 
         self.assertEqual(
-            response.json(),
+            response.json().get('results', []),
             [
                 {
                     "value": value1,

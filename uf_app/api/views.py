@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from uf_app.api.serializers import UFValueSerializer
@@ -14,6 +15,11 @@ from uf_app.validators import is_valid_float, is_valid_date
 
 INVALID_DATE_ERROR_MESSAGE = _('Date format invalid must be yyyymmdd (year, month, day)')
 INVALID_VALUE_ERROR_MESSAGE = _('Value must be valid float')
+
+
+class UFValuePagination(PageNumberPagination):
+    page_size_query_param = 'page_size'
+    page_size = 365
 
 
 class UFValueFilter(filters.FilterSet):
@@ -28,6 +34,7 @@ class UFValueViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UFValueSerializer
     queryset = UFValue.objects.all()
     filter_class = UFValueFilter
+    pagination_class = UFValuePagination
 
 
 @api_view(['GET'])
