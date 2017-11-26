@@ -1,3 +1,5 @@
+import logging
+
 import pendulum
 import scrapy
 from scrapy import FormRequest
@@ -5,6 +7,8 @@ from scrapy import FormRequest
 from uf_app.models import UFValue
 
 MONTH_DAYS = list(map(str, range(1, 32)))
+
+logger = logging.getLogger(__name__)
 
 
 class UFValuesSpider(scrapy.Spider):
@@ -22,6 +26,9 @@ class UFValuesSpider(scrapy.Spider):
     uf_values = []
 
     def parse(self, response):
+        #  First iteration always will be current year
+        only_current_year = getattr(self, 'only_current_year', False)
+
         years = response.css('#DrDwnFechas option::text').extract()
 
         selected_year = response.css(
@@ -73,7 +80,7 @@ class UFValuesSpider(scrapy.Spider):
 
                 month += 1  # Continue to the next month
 
-        if int(next_year) >= int(last_year):
+        if int(next_year) >= int(last_year) and not only_current_year:
             yield FormRequest.from_response(
                 response,
                 formname="form1",
@@ -84,4 +91,9 @@ class UFValuesSpider(scrapy.Spider):
 
     def closed(self, reason):
         if self.uf_values:
-            UFValue.objects.bulk_create(self.uf_values)
+            uf_values_created = UFValue.objects.bulk_create(self.uf_values)
+            logger.info(
+                'UF Values created {}'.format(
+                    len(uf_values_created)
+                )
+            )
