@@ -33,6 +33,9 @@
 
 * Once the previous script is finished, you can check the api [http://localhost:8000/uf/list/](http://localhost:8000/uf/list/)
 
+* To run tests
+    `python manage.py test`
+
 ## Install and run celery
 
 The application has a task that runs every day at the end of the date (23:00 hrs), to update the uf values for the current year,
