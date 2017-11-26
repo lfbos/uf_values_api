@@ -16,7 +16,7 @@ class UFValue(models.Model):
         )
 
     class Meta:
-        verbose_name = _('uf value')
-        verbose_name_plural = _('uf values')
-
+        verbose_name = _('UF value')
+        verbose_name_plural = _('UF values')
         unique_together = (('value', 'date'),)
+        ordering = ['-date']
