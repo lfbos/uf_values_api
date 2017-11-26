@@ -128,12 +128,3 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
-
-# Celery Settings
-BROKER_URL = os.getenv('RABBITMQ_BIGWIG_URL', 'amqp://guest:guest@localhost:5672//')
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_ENABLE_UTC = True
-CELERY_TIMEZONE = 'America/Santiago'
-CELERY_SEND_TASK_ERROR_EMAILS = True
