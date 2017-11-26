@@ -10,7 +10,7 @@
 
     `cd uf_values_api`
 
-* Create python environment
+* Create python environment and install requirements
 
     * Virtualenvwrapper: using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/):
 
