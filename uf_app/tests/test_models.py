@@ -34,6 +34,19 @@ class UFValueModelTest(TestCase):
 
             UFValue.objects.bulk_create(uf_values)
 
+    def test_cannot_create_equal_dates(self):
+        value1 = 26348.83
+        date = pendulum.date.create(2017, 1, 1)
+        value2 = 27348.83
+
+        with self.assertRaises(IntegrityError):
+            uf_values = [
+                UFValue(value=value1, date=date),
+                UFValue(value=value2, date=date)
+            ]
+
+            UFValue.objects.bulk_create(uf_values)
+
     def test_can_create_different_values(self):
         value1 = 26348.83
         date1 = pendulum.date.create(2017, 1, 1)
