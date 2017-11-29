@@ -37,6 +37,7 @@ class UFValueViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = UFValuePagination
 
 
+# This view could use cache
 @api_view(['GET'])
 def uf_price_api_view(request):
     value_string = request.query_params.get('value')

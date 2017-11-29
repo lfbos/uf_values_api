@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 
 import pendulum
 import scrapy
@@ -75,7 +76,7 @@ class UFValuesSpider(scrapy.Spider):
 
                 if value is not None and date is not None:
                     #  Change uf value format
-                    value = float(value.replace('.', '').replace(',', '.'))
+                    value = Decimal(value.replace('.', '').replace(',', '.'))
 
                     #  If date not in current dates
                     if date not in current_dates:

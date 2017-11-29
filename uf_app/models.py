@@ -5,7 +5,11 @@ from django.utils.translation import ugettext as _
 
 
 class UFValue(models.Model):
-    value = models.FloatField(verbose_name=_('Value in Chilean pesos'))
+    value = models.DecimalField(
+        decimal_places=3,
+        max_digits=12,
+        verbose_name=_('Value in Chilean pesos')
+    )
     date = models.DateField(unique=True, verbose_name=_('Value date'))
 
     def __str__(self):
