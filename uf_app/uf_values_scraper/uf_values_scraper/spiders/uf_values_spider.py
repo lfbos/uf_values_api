@@ -47,7 +47,8 @@ class UFValuesSpider(scrapy.Spider):
         month = None
 
         #  Get saved values
-        current_uf_values = UFValue.objects.values_list('date')
+        current_uf_values = UFValue.objects.values('value', 'date')
+        current_dates = list(map(lambda uf_value: uf_value.get('date'), current_uf_values))
 
         #  Iterate over all columns
         for td in response.css('.Grid tr td'):
@@ -76,8 +77,8 @@ class UFValuesSpider(scrapy.Spider):
                     #  Change uf value format
                     value = float(value.replace('.', '').replace(',', '.'))
 
-                    #  If date not in current values
-                    if date not in current_uf_values:
+                    #  If date not in current dates
+                    if date not in current_dates:
                         #  Insert new uf value
                         self.uf_values.append(
                             UFValue(
@@ -86,14 +87,30 @@ class UFValuesSpider(scrapy.Spider):
                             )
                         )
                     elif only_current_year:
+
                         #  Check values for current year (some probably changed)
-                        UFValue.objects.filter(
-                            date=date  # Filter by date
-                        ).exclude(
-                            value=value  # Exclude the value if is equal than before
-                        ).update(
-                            value=value  # Update
-                        )
+                        uf = list(
+                            filter(
+                                lambda uf_value: uf_value.get('date') == date,
+                                current_uf_values
+                            )
+                        )[0]
+
+                        current_value = uf.get('value')
+
+                        if value != current_value:  # If value is different
+                            UFValue.objects.filter(
+                                date=date  # Filter by date
+                            ).update(
+                                value=value  # Update
+                            )
+
+                            logger.info(
+                                'Value for the date {} updated: {}'.format(
+                                    date,
+                                    value
+                                )
+                            )
 
                 month += 1  # Continue to the next month
 
