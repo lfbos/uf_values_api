@@ -29,6 +29,8 @@
 
 * Migrate database `python manage.py migrate`
 
+* Create file `.env` and add the corresponding information (see .env.example)
+
 * Load initial data (could take a while) `python manage.py load_all_uf_values`
 
 * Once the previous script is finished, you can check the api [http://localhost:8000/uf/list/](http://localhost:8000/uf/list/)
