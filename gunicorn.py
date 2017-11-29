@@ -1,0 +1,10 @@
+chdir = "/app"
+accesslog = "-"
+errorlog = "-"
+loglevel = "debug"
+reload = True
+worker_class = "eventlet"
+workers = 4
+bind = ":8000"
+proc_name = "uf_values_api"
+max_requests = 45

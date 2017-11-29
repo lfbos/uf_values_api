@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  rabbit:
+    restart: always
+    image: rabbitmq
+    ports:
+      - "5673:5672"
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        DJANGO_DEBUG: "True"
+    image: uf_values_api:latest
+    volumes:
+      - ".:/app"
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "${DJANGO_DEBUG}"
+  celery:
+    restart: always
+    image: uf_values_api:latest
+    depends_on:
+      - rabbit
+    links:
+      - rabbit
+    command: celery worker -A uf_values_api
