@@ -6,7 +6,7 @@
   with_items:
     - apt-transport-https
     - ca-certificates
-    - "linux-image-extra-{{ ansible_kernel }}"
+#    - "linux-image-extra-{{ ansible_kernel }}"
 
 - name: apt official docker key
   apt_key: >
@@ -31,7 +31,7 @@
   pip: name=pyyaml state=latest
 
 - name: install docker-compose 1.9.0
-  pip: name=docker-compose version=1.9.0
+  pip: name=docker-compose state=latest
 
-- name: install docker-py 1.10.5
-  pip: name=docker-py version=1.10.5
+- name: install docker-py
+  pip: name=docker-py state=latest

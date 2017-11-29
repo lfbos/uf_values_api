@@ -10,5 +10,7 @@ app_environment: "development"
 env: "{{ app_path_server }}/env"
 backup_server: "."
 
-rabbit_host: "{{ app_name }}_rabbit"
+rabbit_host: "rabbit"
 worker_host: "{{ app_name }}_worker_host"
+
+vhost: "{{ app_name }}"
