@@ -112,3 +112,6 @@ venv.bak/
 
 # IntelliJ
 .idea/
+
+# Vars environment
+.env
