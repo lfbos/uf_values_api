@@ -16,5 +16,5 @@ def update_uf_values():
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
 
-    process.crawl(UFValuesSpider, current_year=True)
+    process.crawl(UFValuesSpider, only_current_year=True)
     process.start()
