@@ -1,0 +1,3 @@
+ansible_ssh_host: 177.71.194.132
+ansible_ssh_user: root
+hostname: 'ufapp'

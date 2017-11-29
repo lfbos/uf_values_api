@@ -1,14 +1,6 @@
 ---
 # tasks file for uakami.core
 
-- name: create uakami support user account
-  user: >
-    name=uakami
-    comment="Uakami Support Account"
-    group=sudo
-    password="{{ support_account_password }}"
-    shell="/bin/bash"
-
 - name: set hostname
   hostname: name={{ hostname }}
   when: hostname is defined

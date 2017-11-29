@@ -1,3 +1,0 @@
-ansible_ssh_host: 52.67.46.7
-ansible_ssh_user: root
-hostname: 'dev-uf'

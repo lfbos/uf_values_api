@@ -1,6 +1,5 @@
-- hosts: production
+- hosts: development
   roles:
-    - core
     - tools
     - webserver
     - docker
