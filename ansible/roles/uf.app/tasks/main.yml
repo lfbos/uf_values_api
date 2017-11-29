@@ -1,0 +1,89 @@
+---
+# tasks file for ambit.pac-gateway
+
+- name: install playbook deps
+  pip: name={{ item }} state=latest
+  with_items:
+    - pexpect
+
+- name: settle app dir
+  file: path={{ app_path_server }} state=directory
+
+- name: sync app code
+  synchronize: src={{ playbook_dir }}/../
+               dest={{ app_path_server }}
+               recursive=yes
+  tags:
+    - sync
+
+- name: fix permissions
+  file: path={{ app_path_server }} owner=root group=www-data recurse=yes
+  tags:
+    - sync
+
+- name: add env file
+  template: src=envfile.j2 dest={{ app_path_server }}/.env
+  tags:
+    - sync
+
+- name: add docker directory
+  file: path={{ app_path_server }}/docker state=directory
+  tags:
+    - sync
+
+- name: add docker run scripts
+  template: src={{ item }}.sh.j2 dest={{ app_path_server }}/docker/{{ item }}.sh
+  with_items:
+    - functions
+    - prepare
+    - run
+  tags:
+    - sync
+
+- name: add gunicorn config
+  template: src=gunicorn.py.j2 dest={{ app_path_server }}/gunicorn.py
+  tags:
+    - sync
+
+- name: add dockerfile
+  template: src=Dockerfile.j2 dest={{ app_path_server }}/docker/Dockerfile
+  tags:
+    - sync
+
+- name: add docker-compose setup
+  template: src=docker-compose.yml.j2 dest={{ app_path_server }}/docker-compose.yml
+  tags:
+    - sync
+
+- name: add nginx site
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ vhost }}.conf
+  tags:
+    - sync
+
+- name: add robots.txt
+  copy: src=robots.txt dest={{ app_path_server }}/robots.txt
+  tags:
+    - sync
+
+- name: build the service via docker-compose
+  docker_service:
+    project_src: "{{ app_path_server }}"
+  register: docker_service_build
+
+- name: migrate the database
+  shell: docker-compose run --rm {{ app_name }} python manage.py migrate --noinput
+  args:
+    chdir: "{{ app_path_server }}"
+
+- name: collect static files
+  shell: docker-compose run --rm {{ app_name }} python manage.py collectstatic --noinput
+  args:
+    chdir: "{{ app_path_server }}"
+
+- name: restart the service
+  docker_service:
+    project_src: "{{ app_path_server }}"
+    build: no
+    state: present
+    restarted: yes
+  when: docker_service_build.changed or app_environment == "production"

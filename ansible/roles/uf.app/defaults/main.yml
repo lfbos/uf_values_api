@@ -1,0 +1,4 @@
+---
+# defaults file for uf.app
+django_project_name: "uf_values_api"
+app_timezone: "America/Santiago"

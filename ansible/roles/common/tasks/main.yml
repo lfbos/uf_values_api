@@ -1,0 +1,4 @@
+---
+# tasks file for uakami.common
+- name: include distribution specific tasks
+  include: "{{ ansible_os_family }}.yml"

@@ -1,0 +1,11 @@
+chdir = "{{ app_path_container }}"
+accesslog = "-"
+errorlog = "-"
+loglevel = "{% if app_debug %}debug{% else %}info{% endif %}"
+reload = {% if app_debug %}True{% else %}False{% endif %}
+
+worker_class = "eventlet"
+workers = {{ app_workers }}
+bind = ":{{ app_port }}"
+proc_name = "{{ django_project_name }}"
+max_requests = {{ app_max_requests }}

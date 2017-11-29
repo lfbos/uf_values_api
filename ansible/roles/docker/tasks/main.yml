@@ -1,0 +1,37 @@
+---
+# tasks file for uakami.docker
+
+- name: install docker repo deps
+  apt: name={{ item }} state=latest
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - "linux-image-extra-{{ ansible_kernel }}"
+
+- name: apt official docker key
+  apt_key: >
+    id=58118E89F3A912897C070ADBF76221572C52609D
+    keyserver=hkp://p80.pool.sks-keyservers.net:80
+
+- name: apt official docker repository
+  apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
+
+- name: install ansible docker deps
+  apt: name={{ item }} state=latest force=yes update_cache=yes cache_valid_time=3600
+  with_items:
+    - python-pip
+    - docker-engine
+  register: docker_updates
+
+- name: restart docker
+  service: name=docker state=restarted
+  when: docker_updates.changed
+
+- name: install pyyaml dep
+  pip: name=pyyaml state=latest
+
+- name: install docker-compose 1.9.0
+  pip: name=docker-compose version=1.9.0
+
+- name: install docker-py 1.10.5
+  pip: name=docker-py version=1.10.5

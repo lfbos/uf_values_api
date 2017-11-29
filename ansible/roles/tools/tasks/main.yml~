@@ -1,0 +1,11 @@
+---
+# tasks file for uakami.tools
+
+- name: install tools
+  apt: package={{ item }} state=latest
+  when: ansible_os_family == 'Debian'
+  with_items:
+    - mosh
+    - most
+    - tree
+    - htop

@@ -1,0 +1,7 @@
+install_python_requirements () {
+    pip install -U pip setuptools -r requirements.txt
+}
+
+run_gunicorn () {
+    exec gunicorn --config=/app/gunicorn.py {{ django_project_name }}.wsgi
+}

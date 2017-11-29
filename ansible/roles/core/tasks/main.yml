@@ -1,0 +1,17 @@
+---
+# tasks file for uakami.core
+
+- name: create uakami support user account
+  user: >
+    name=uakami
+    comment="Uakami Support Account"
+    group=sudo
+    password="{{ support_account_password }}"
+    shell="/bin/bash"
+
+- name: set hostname
+  hostname: name={{ hostname }}
+  when: hostname is defined
+
+- name: add hosts entry for hostname
+  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 localhost {{ hostname }}' owner=root group=root mode=0644

@@ -1,0 +1,7 @@
+---
+# vars file for uakami.tools
+common_packages:
+  - mosh
+  - tmux
+  - htop
+  - tree

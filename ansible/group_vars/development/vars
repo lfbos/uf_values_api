@@ -1,0 +1,14 @@
+app_name: "uf"
+app_path_server: "/srv/www/{{ vhost }}/"
+app_path_container: "/app/"
+app_port: 8000
+app_debug: True
+app_timezone: "America/Mexico_City"
+app_workers: 3
+app_max_requests: 35
+app_environment: "development"
+env: "{{ app_path_server }}/env"
+backup_server: "."
+
+rabbit_host: "{{ app_name }}_rabbit"
+worker_host: "{{ app_name }}_worker_host"

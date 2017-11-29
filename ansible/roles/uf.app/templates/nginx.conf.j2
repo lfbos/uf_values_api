@@ -1,0 +1,38 @@
+upstream {{ vhost.replace('.', '_') }} {
+    # For a TCP configuration:
+    server 127.0.0.1:{{ app_port }} fail_timeout=0;
+}
+
+server {
+    listen 80;
+    server_name {{ vhost }};
+
+    client_max_body_size 4G;
+
+    keepalive_timeout 5;
+
+    access_log /var/log/nginx/{{ vhost }}-access.log;
+    error_log /var/log/nginx/{{ vhost }}-error.log;
+
+    location @app {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+
+        proxy_pass http://{{ vhost.replace('.', '_') }};
+    }
+
+    location / {
+        # checks for static file, if not found proxy to app
+        try_files $uri @app;
+    }
+
+    location /static/ {
+        alias {{ app_path_server }}/{{ django_project_name }}/static/;
+        try_files $uri @app;
+    }
+
+    location /robots.txt {
+        alias {{ app_path_server }}/robots.txt;
+    }
+}

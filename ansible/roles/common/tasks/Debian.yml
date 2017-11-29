@@ -1,0 +1,5 @@
+- name: make sure aptitude is installed
+  apt: package=aptitude state=latest
+
+- name: update system
+  apt: upgrade=safe update_cache=true cache_valid_time=3600
