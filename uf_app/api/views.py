@@ -1,4 +1,5 @@
 import django_filters
+from decimal import Decimal
 from django.utils.translation import ugettext as _
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
@@ -53,7 +54,7 @@ def uf_price_api_view(request):
         raise APIException(INVALID_DATE_ERROR_MESSAGE)
 
     date = string_to_date(date_string)
-    value = float(value_string)
+    value = Decimal(value_string)
 
     uf_value = get_object_or_404(UFValue, date=date)
 
