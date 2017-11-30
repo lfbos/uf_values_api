@@ -69,6 +69,6 @@ to run the task celery must be installed and running.
     - Response: gets the corresponding uf price calculated when a value (chilean pesos) and a date are passed.
     - Filter required:
       - value: chilean value to transform
-      - date: date to get the corresponding uf value (format yyyymmdd)
-      e.g.: ?value=26396.79&date=20170101
+      - date: date to get the corresponding uf value (format yyyy-mm-dd)
+      e.g.: ?value=26396.79&date=2017-01-01
     - Response: value and date input, price (uf value calculated).
