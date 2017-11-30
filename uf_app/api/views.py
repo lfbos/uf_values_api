@@ -1,21 +1,15 @@
 import django_filters
-from decimal import Decimal
 from django.utils.translation import ugettext as _
 from django_filters import rest_framework as filters
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import APIException
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from uf_app.api.serializers import UFValueSerializer
+from uf_app.api.serializers import UFValueSerializer, UFPriceSerializer
 from uf_app.models import UFValue
-from uf_app.utils import string_to_date, pesos_to_uf
-from uf_app.validators import is_valid_float, is_valid_date
-
-INVALID_DATE_ERROR_MESSAGE = _('Date format invalid must be yyyymmdd (year, month, day)')
-INVALID_VALUE_ERROR_MESSAGE = _('Value must be valid float')
+from uf_app.utils import pesos_to_uf
 
 
 class UFValuePagination(PageNumberPagination):
@@ -41,27 +35,27 @@ class UFValueViewSet(viewsets.ReadOnlyModelViewSet):
 # This view could use cache
 @api_view(['GET'])
 def uf_price_api_view(request):
-    value_string = request.query_params.get('value')
-    date_string = request.query_params.get('date')
+    value = request.query_params.get('value')
+    date = request.query_params.get('date')
 
-    if not value_string or not date_string:
-        return Response({})
+    if value is None and date is None:
+        return Response({
+            "error": _("You must pass a value (chilean pesos) and a date as parameters.")
+        }, status=status.HTTP_400_BAD_REQUEST)
 
-    if not is_valid_float(value_string):
-        raise APIException(INVALID_VALUE_ERROR_MESSAGE)
+    data = {
+        'value': value,
+        'date': date
+    }
 
-    if not is_valid_date(date_string):
-        raise APIException(INVALID_DATE_ERROR_MESSAGE)
+    serializer = UFPriceSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
 
-    date = string_to_date(date_string)
-    value = Decimal(value_string)
+    data = serializer.validated_data
+    uf_value = get_object_or_404(UFValue, date=data.get('date'))
 
-    uf_value = get_object_or_404(UFValue, date=date)
-
-    price = pesos_to_uf(value, uf_value.value)
-
-    return Response({
-        "price": price,
-        "value": value,
-        "date": date.to_date_string()
+    data.update({
+        'price': pesos_to_uf(data.get('value'), uf_value.value)
     })
+
+    return Response(data, status=status.HTTP_200_OK)

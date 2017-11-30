@@ -1,9 +1,6 @@
 import pendulum
 from django.test import TestCase
 
-from uf_app.api.views import (
-    INVALID_DATE_ERROR_MESSAGE, INVALID_VALUE_ERROR_MESSAGE
-)
 from uf_app.models import UFValue
 
 
@@ -94,13 +91,10 @@ class UFValueListAPITest(TestCase):
 class UFPriceAPITest(TestCase):
     base_url = '/uf/price/'
 
-    def test_get_empty_response_if_url_does_not_have_parameters(self):
+    def test_error_if_url_does_not_have_parameters(self):
         response = self.client.get(self.base_url)
 
-        self.assertEqual(
-            response.json(),
-            {}
-        )
+        self.assertEqual(response.status_code, 400)
 
     def test_error_with_invalid_date_parameter(self):
         value = 200000
@@ -113,12 +107,11 @@ class UFPriceAPITest(TestCase):
             )
         )
 
-        self.assertEqual(response.status_code, 500)
-        self.assertEqual(response.json().get('detail'), INVALID_DATE_ERROR_MESSAGE)
+        self.assertEqual(response.status_code, 400)
 
     def test_error_with_invalid_value_parameter(self):
         value = '1212412f'
-        date = '20170101'
+        date = '2017-01-01'
 
         response = self.client.get(
             '{}?value={}&date={}'.format(
@@ -128,12 +121,11 @@ class UFPriceAPITest(TestCase):
             )
         )
 
-        self.assertEqual(response.status_code, 500)
-        self.assertEqual(response.json().get('detail'), INVALID_VALUE_ERROR_MESSAGE)
+        self.assertEqual(response.status_code, 400)
 
     def test_error_uf_not_found(self):
         value = 20000.124
-        date = '20170101'
+        date = '2017-01-01'
 
         response = self.client.get(
             '{}?value={}&date={}'.format(
@@ -147,7 +139,7 @@ class UFPriceAPITest(TestCase):
     def test_valid_uf_price_response(self):
         chilean_pesos = 30000
         value = 26348.83
-        date = pendulum.date.create(2017, 1, 1)
+        date = pendulum.date.create(2017, 1, 1).to_date_string()
 
         UFValue.objects.create(value=value, date=date)
 
@@ -155,7 +147,7 @@ class UFPriceAPITest(TestCase):
             '{}?value={}&date={}'.format(
                 self.base_url,
                 chilean_pesos,
-                date.strftime('%Y%m%d')
+                date
             )
         )
 
