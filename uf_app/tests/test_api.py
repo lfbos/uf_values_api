@@ -16,7 +16,7 @@ class UFValueListAPITest(TestCase):
         self.assertEqual(response['content-type'], 'application/json')
 
     def test_get_returns_items_for_correct_uf_values(self):
-        value = 26348.83
+        value = "26348.830"
         date = pendulum.date.create(2017, 1, 1)
 
         UFValue.objects.create(value=value, date=date)
@@ -31,10 +31,10 @@ class UFValueListAPITest(TestCase):
         )
 
     def test_filter_by_year(self):
-        value1 = 26348.83
+        value1 = "26348.830"
         date1 = pendulum.date.create(2017, 1, 1)
 
-        value2 = 26347.7
+        value2 = "26347.700"
         date2 = pendulum.date.create(2017, 1, 2)
 
         uf_values = [
@@ -61,10 +61,10 @@ class UFValueListAPITest(TestCase):
         )
 
     def test_filter_by_date(self):
-        value1 = 26348.83
+        value1 = "26348.830"
         date1 = pendulum.date.create(2017, 1, 1)
 
-        value2 = 26347.7
+        value2 = "26347.700"
         date2 = pendulum.date.create(2017, 1, 2)
 
         uf_values = [
